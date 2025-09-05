@@ -39,4 +39,27 @@ class AddressBook {
   addContact(contact: Contact): void {
     this.contacts.push(contact);
   }
+
+  private findContact(name: string): number {
+    return this.contacts.findIndex(
+      (c) => c.fname.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  editContact(name: string, property: keyof Contact, change: any): void {
+    const index = this.findContact(name);
+    if (index !== -1) {
+      if (this.contacts[index]?.hasOwnProperty(property)) {
+        (this.contacts[index] as any)[property] = change;
+        console.log(
+          `Contact ${name} updated successfully.`,
+          this.contacts[index]?.toString()
+        );
+      } else {
+        console.log("Invalid property name.");
+      }
+    } else {
+      console.log("the contact not found");
+    }
+  }
 }
