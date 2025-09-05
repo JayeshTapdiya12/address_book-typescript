@@ -62,4 +62,14 @@ class AddressBook {
       console.log("the contact not found");
     }
   }
+
+  deleteContact(name: string): void {
+    const index = this.findContact(name);
+    if (index !== 1) {
+      console.log(`contact delted`, this.contacts[index]?.toString());
+      this.contacts.splice(index, 1);
+    } else {
+      console.log("the contact not found / exists");
+    }
+  }
 }
