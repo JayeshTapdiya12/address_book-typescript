@@ -32,3 +32,11 @@ class Contact {
     return `${this.fname} ${this.lname} , ${this.address}, ${this.city}, ${this.state}, ${this.zipcode}, ${this.phoneNumber}, ${this.email}`;
   }
 }
+
+class AddressBook {
+  private contacts: Contact[] = [];
+
+  addContact(contact: Contact): void {
+    this.contacts.push(contact);
+  }
+}
