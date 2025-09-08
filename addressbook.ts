@@ -97,6 +97,16 @@ class AddressBook {
     }
     return match;
   }
+  sortContacts(): void {
+    this.contacts.sort((a, b) => {
+      const nameA = `${a.fname} ${a.lname}`.toLowerCase();
+      const nameB = `${b.fname} ${b.lname}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+
+    console.log("Contacts sorted alphabetically:");
+    this.contacts.forEach((c) => console.log(c.toString()));
+  }
 }
 
 class AddressBookSystem {
