@@ -73,3 +73,5 @@ class AddressBook {
     }
   }
 }
+
+const book = new AddressBook(); // this is how to  add multiple person to Address Book
