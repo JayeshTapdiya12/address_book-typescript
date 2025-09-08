@@ -74,4 +74,81 @@ class AddressBook {
   }
 }
 
-const book = new AddressBook(); // this is how to  add multiple person to Address Book
+class AddressBookSystem {
+  private books: Map<string, AddressBook>;
+
+  constructor() {
+    this.books = new Map<string, AddressBook>();
+  }
+
+  addAddressBook(name: string): void {
+    if (this.books.has(name)) {
+      console.log(`Address Book with name '${name}' already exists!`);
+    } else {
+      this.books.set(name, new AddressBook());
+      console.log(`Address Book '${name}' created successfully.`);
+    }
+  }
+
+  getAddressBook(name: string): AddressBook | undefined {
+    return this.books.get(name);
+  }
+
+  listAddressBooks(): void {
+    console.log("Available Address Books:");
+    this.books.forEach((_book, name) => console.log(name));
+  }
+}
+
+const book = new AddressBookSystem();
+
+book.addAddressBook("Family");
+book.addAddressBook("Friends");
+
+// Add contacts into "Family" Address Book
+const familyBook = book.getAddressBook("Family");
+if (familyBook) {
+  familyBook.addContact(
+    new Contact(
+      "Jayesh",
+      "Tapdiya",
+      "MG Road",
+      "Bangalore",
+      "Karnataka",
+      560001,
+      9876543210,
+      "jayesh@email.com"
+    )
+  );
+  familyBook.addContact(
+    new Contact(
+      "Ravi",
+      "Kumar",
+      "Brigade Road",
+      "Bangalore",
+      "Karnataka",
+      560002,
+      9123456780,
+      "ravi@email.com"
+    )
+  );
+  familyBook.toString();
+}
+
+// Add contacts into "Friends" Address Book
+const friendsBook = book.getAddressBook("Friends");
+if (friendsBook) {
+  friendsBook.addContact(
+    new Contact(
+      "Amit",
+      "Shah",
+      "Andheri",
+      "Mumbai",
+      "Maharashtra",
+      400001,
+      9988776655,
+      "amit@email.com"
+    )
+  );
+  friendsBook.toString();
+}
