@@ -192,6 +192,29 @@ class AddressBookSystem {
       console.log(`No persons found in state ${state}`);
     }
   }
+  countByCity(city: string): number {
+    let count = 0;
+    this.books.forEach((book) => {
+      book.getContacts().forEach((contact) => {
+        if (contact.city.toLowerCase() === city.toLowerCase()) {
+          count++;
+        }
+      });
+    });
+    return count;
+  }
+
+  countByState(state: string): number {
+    let count = 0;
+    this.books.forEach((book) => {
+      book.getContacts().forEach((contact) => {
+        if (contact.state.toLowerCase() === state.toLowerCase()) {
+          count++;
+        }
+      });
+    });
+    return count;
+  }
 }
 
 const book = new AddressBookSystem();
