@@ -37,7 +37,16 @@ class AddressBook {
   private contacts: Contact[] = [];
 
   addContact(contact: Contact): void {
-    this.contacts.push(contact);
+    const duplicate = this.contacts.find(
+      (c) =>
+        c.fname.toLowerCase() === contact.fname.toLowerCase() &&
+        c.lname.toLowerCase() === contact.lname.toLowerCase()
+    );
+    if (duplicate) {
+      console.log("the name is already exist in the address book");
+    } else {
+      this.contacts.push(contact);
+    }
   }
 
   private findContact(name: string): number {
