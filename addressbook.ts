@@ -81,6 +81,20 @@ class AddressBook {
       console.log("the contact not found / exists");
     }
   }
+  searchByCityOrState(property: keyof Contact, value: string): string[] {
+    const match: string[] = [];
+    for (const contact of this.contacts) {
+      const propValue = contact[property];
+      if (
+        typeof propValue === "string" &&
+        propValue.toLowerCase() === value.toLowerCase()
+      ) {
+        console.log(`The person living in ${value} is ${contact.fname}`);
+        match.push(contact.fname);
+      }
+    }
+    return match;
+  }
 }
 
 class AddressBookSystem {
@@ -106,6 +120,20 @@ class AddressBookSystem {
   listAddressBooks(): void {
     console.log("Available Address Books:");
     this.books.forEach((_book, name) => console.log(name));
+  }
+
+  searchByCityOrState(property: keyof Contact, value: string): void {
+    let found = false;
+    this.books.forEach((book, bookName) => {
+      const results = book.searchByCityOrState(property, value);
+      results.forEach((name) => {
+        console.log(`[${bookName}] ${name}`);
+        found = true;
+      });
+    });
+    if (!found) {
+      console.log(`No person found in ${value}`);
+    }
   }
 }
 
