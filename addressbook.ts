@@ -97,14 +97,23 @@ class AddressBook {
     }
     return match;
   }
-  sortContacts(): void {
+  sortBy(
+    property: keyof Pick<
+      Contact,
+      "fname" | "lname" | "city" | "state" | "zipcode"
+    >
+  ): void {
     this.contacts.sort((a, b) => {
-      const nameA = `${a.fname} ${a.lname}`.toLowerCase();
-      const nameB = `${b.fname} ${b.lname}`.toLowerCase();
-      return nameA.localeCompare(nameB);
+      const valA = a[property];
+      const valB = b[property];
+
+      if (typeof valA === "number" && typeof valB === "number") {
+        return valA - valB;
+      }
+      return String(valA).localeCompare(String(valB));
     });
 
-    console.log("Contacts sorted alphabetically:");
+    console.log(`Contacts sorted by ${property}:`);
     this.contacts.forEach((c) => console.log(c.toString()));
   }
 }
