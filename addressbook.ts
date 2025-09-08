@@ -48,7 +48,9 @@ class AddressBook {
       this.contacts.push(contact);
     }
   }
-
+  getContacts(): Contact[] {
+    return this.contacts;
+  }
   private findContact(name: string): number {
     return this.contacts.findIndex(
       (c) => c.fname.toLowerCase() === name.toLowerCase()
@@ -99,9 +101,13 @@ class AddressBook {
 
 class AddressBookSystem {
   private books: Map<string, AddressBook>;
+  private cityDictionary: Map<string, Contact[]>;
+  private stateDictionary: Map<string, Contact[]>;
 
   constructor() {
     this.books = new Map<string, AddressBook>();
+    this.cityDictionary = new Map<string, Contact[]>();
+    this.stateDictionary = new Map<string, Contact[]>();
   }
 
   addAddressBook(name: string): void {
@@ -133,6 +139,47 @@ class AddressBookSystem {
     });
     if (!found) {
       console.log(`No person found in ${value}`);
+    }
+  }
+
+  buildDictionaries(): void {
+    this.cityDictionary.clear();
+    this.stateDictionary.clear();
+
+    this.books.forEach((book) => {
+      for (const contact of book.getContacts()) {
+        // City dictionary
+        if (!this.cityDictionary.has(contact.city)) {
+          this.cityDictionary.set(contact.city, []);
+        }
+        this.cityDictionary.get(contact.city)!.push(contact);
+
+        // State dictionary
+        if (!this.stateDictionary.has(contact.state)) {
+          this.stateDictionary.set(contact.state, []);
+        }
+        this.stateDictionary.get(contact.state)!.push(contact);
+      }
+    });
+  }
+
+  viewByCity(city: string): void {
+    const persons = this.cityDictionary.get(city);
+    if (persons && persons.length > 0) {
+      console.log(`Persons in city ${city}:`);
+      persons.forEach((c) => console.log(`- ${c.fname} ${c.lname}`));
+    } else {
+      console.log(`No persons found in city ${city}`);
+    }
+  }
+
+  viewByState(state: string): void {
+    const persons = this.stateDictionary.get(state);
+    if (persons && persons.length > 0) {
+      console.log(`Persons in state ${state}:`);
+      persons.forEach((c) => console.log(`- ${c.fname} ${c.lname}`));
+    } else {
+      console.log(`No persons found in state ${state}`);
     }
   }
 }
