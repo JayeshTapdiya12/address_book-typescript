@@ -1,5 +1,8 @@
 //  this is the main branch of the address book
 
+// import readlineSync from "readline-sync";
+import * as readlineSync from "readline-sync";
+
 class Contact {
   fname: string;
   lname: string;
@@ -97,15 +100,10 @@ class AddressBook {
     }
     return match;
   }
-  sortBy(
-    property: keyof Pick<
-      Contact,
-      "fname" | "lname" | "city" | "state" | "zipcode"
-    >
-  ): void {
+  sortBy(field: keyof Contact) {
     this.contacts.sort((a, b) => {
-      const valA = a[property];
-      const valB = b[property];
+      const valA = a[field];
+      const valB = b[field];
 
       if (typeof valA === "number" && typeof valB === "number") {
         return valA - valB;
@@ -113,7 +111,7 @@ class AddressBook {
       return String(valA).localeCompare(String(valB));
     });
 
-    console.log(`Contacts sorted by ${property}:`);
+    console.log(`Contacts sorted by ${field}:`);
     this.contacts.forEach((c) => console.log(c.toString()));
   }
 }
@@ -225,56 +223,151 @@ class AddressBookSystem {
     return count;
   }
 }
+function menu(system: AddressBookSystem) {
+  while (true) {
+    console.log("\nOptions:");
+    console.log("1. Create Address Book");
+    console.log("2. Add Contact");
+    console.log("3. Display Contacts");
+    console.log("4. Edit Contact");
+    console.log("5. Delete Contact");
+    console.log("6. Search by City");
+    console.log("7. Search by State");
+    console.log("8. View by City");
+    console.log("9. View by State");
+    console.log("10. Count by City");
+    console.log("11. Count by State");
+    console.log("12. Sort by Name");
+    console.log("13. Sort by City/State/Zip");
+    console.log("14. Exit");
 
-const book = new AddressBookSystem();
+    const option = readlineSync.questionInt("Select option: ");
 
-book.addAddressBook("Family");
-book.addAddressBook("Friends");
-
-// Add contacts into "Family" Address Book
-const familyBook = book.getAddressBook("Family");
-if (familyBook) {
-  familyBook.addContact(
-    new Contact(
-      "Jayesh",
-      "Tapdiya",
-      "MG Road",
-      "Bangalore",
-      "Karnataka",
-      560001,
-      9876543210,
-      "jayesh@email.com"
-    )
-  );
-  familyBook.addContact(
-    new Contact(
-      "Ravi",
-      "Kumar",
-      "Brigade Road",
-      "Bangalore",
-      "Karnataka",
-      560002,
-      9123456780,
-      "ravi@email.com"
-    )
-  );
-  familyBook.toString();
+    switch (option) {
+      case 1: {
+        const name = readlineSync.question("Enter Address Book name: ");
+        system.addAddressBook(name);
+        break;
+      }
+      case 2: {
+        const bookName = readlineSync.question("Book to add contact to: ");
+        const book = system.getAddressBook(bookName);
+        if (book) {
+          const fname = readlineSync.question("First name: ");
+          const lname = readlineSync.question("Last name: ");
+          const address = readlineSync.question("Address: ");
+          const city = readlineSync.question("City: ");
+          const state = readlineSync.question("State: ");
+          const zipcode = readlineSync.questionInt("Zipcode: ");
+          const phoneNumber = readlineSync.questionInt("Phone Number: ");
+          const email = readlineSync.question("Email: ");
+          const contact = new Contact(
+            fname,
+            lname,
+            address,
+            city,
+            state,
+            zipcode,
+            phoneNumber,
+            email
+          );
+          book.addContact(contact);
+        } else {
+          console.log("Book not found.");
+        }
+        break;
+      }
+      case 3: {
+        const bookName = readlineSync.question("Book name to view: ");
+        const book = system.getAddressBook(bookName);
+        if (book) {
+          book.getContacts().forEach((c) => console.log(c.toString()));
+        } else {
+          console.log("Book not found.");
+        }
+        break;
+      }
+      case 4: {
+        const bookName = readlineSync.question("Book name: ");
+        const book = system.getAddressBook(bookName);
+        if (book) {
+          const name = readlineSync.question(
+            "Enter First Name of contact to edit: "
+          );
+          const property = readlineSync.question(
+            "Property to edit (fname/lname/address/city/state/zipcode/phoneNumber/email): "
+          ) as keyof Contact;
+          const change = readlineSync.question("New value: ");
+          book.editContact(name, property, change);
+        }
+        break;
+      }
+      case 5: {
+        const bookName = readlineSync.question("Book name: ");
+        const book = system.getAddressBook(bookName);
+        if (book) {
+          const name = readlineSync.question(
+            "Enter First Name of contact to delete: "
+          );
+          book.deleteContact(name);
+        }
+        break;
+      }
+      case 6: {
+        const city = readlineSync.question("City to search: ");
+        system.searchByCityOrState("city", city);
+        break;
+      }
+      case 7: {
+        const state = readlineSync.question("State to search: ");
+        system.searchByCityOrState("state", state);
+        break;
+      }
+      case 8: {
+        system.buildDictionaries();
+        const city = readlineSync.question("City: ");
+        system.viewByCity(city);
+        break;
+      }
+      case 9: {
+        system.buildDictionaries();
+        const state = readlineSync.question("State: ");
+        system.viewByState(state);
+        break;
+      }
+      case 10: {
+        const city = readlineSync.question("City: ");
+        console.log(`Count: ${system.countByCity(city)}`);
+        break;
+      }
+      case 11: {
+        const state = readlineSync.question("State: ");
+        console.log(`Count: ${system.countByState(state)}`);
+        break;
+      }
+      case 12: {
+        const bookName = readlineSync.question("Book name: ");
+        const book = system.getAddressBook(bookName);
+        if (book) book.sortBy("fname");
+        break;
+      }
+      case 13: {
+        const bookName = readlineSync.question("Book name: ");
+        const book = system.getAddressBook(bookName);
+        if (book) {
+          const field = readlineSync.question("Sort by: ") as keyof Contact;
+          book.sortBy(field);
+        }
+        break;
+      }
+      case 14:
+        console.log("Goodbye!");
+        process.exit(0);
+      default:
+        console.log("Invalid option.");
+    }
+  }
 }
 
-// Add contacts into "Friends" Address Book
-const friendsBook = book.getAddressBook("Friends");
-if (friendsBook) {
-  friendsBook.addContact(
-    new Contact(
-      "Amit",
-      "Shah",
-      "Andheri",
-      "Mumbai",
-      "Maharashtra",
-      400001,
-      9988776655,
-      "amit@email.com"
-    )
-  );
-  friendsBook.toString();
-}
+const system = new AddressBookSystem();
+menu(system);
